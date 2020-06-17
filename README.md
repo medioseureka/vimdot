@@ -1,5 +1,7 @@
 # Vim's files
 
+> This steps are for unix system if you are using in another environment use each plugin's site
+
 ## how to install?
   - clone the repo
   - cd vimdot
