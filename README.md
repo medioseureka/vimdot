@@ -1,6 +1,6 @@
-# Vim's files
+# Best web IDE like vim's dot file
 
-> This steps are for unix system if you are using in another environment use each plugin's site
+> This steps are for unix system if you want to use it in another environment use each plugin's site
 
 ## how to install?
   - clone the repo
