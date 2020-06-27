@@ -1,170 +1,168 @@
 set nocompatible
 syntax on
 filetype plugin indent on
+set omnifunc=syntaxcomplete#Complete
+
+set guicursor=
+set nohlsearch
+set hidden
+set noerrorbells
+set tabstop=2 softtabstop=2
+set shiftwidth=2
+set expandtab
+set smartindent
+set nu
+set relativenumber
+set cursorline
 set nowrap
-set encoding=utf8
-let mapleader=","
+set smartcase
+set noswapfile
+set nobackup
+set nowritebackup
+set undodir=~/.vim/undodir
+set undofile
+set incsearch
+set termguicolors
+set scrolloff=8
+set showmatch
 
 " OSX backspace
 set backspace=indent,eol,start
 
-" Show line number
-set number relativenumber
-set ruler
-set cursorline
-
-" Save with F2 in insert mode
-inoremap <F2> <C-\><C-o>:w<CR>
-
-" Tabs
-set expandtab " spaces instead tab
-set tabstop=2
-set shiftwidth=2
-set smarttab
-
-" Indentation
-set autoindent
-set smartindent
-
-call plug#begin()
-" Utilities
-Plug 'majutsushi/tagbar'
-Plug 'ervandew/supertab'
-Plug 'moll/vim-bbye' " delete buffers
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
-Plug 'godlygeek/tabular' " Tab the selection to avoid mismatch equals signs
-Plug 'gilsondev/searchtasks.vim' " Search TODO FIXME XXX Example: :SearchTasks .
-Plug 'tpope/vim-dispatch' " To run async tests
-Plug 'neomake/neomake'
-Plug 'Xuyuanp/nerdtree-git-plugin'
-Plug 'mattn/emmet-vim'
-Plug 'preservim/nerdtree'
-
-" Generic Programming Support
-Plug 'Townk/vim-autoclose'
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-
-" GIT
-Plug 'tpope/vim-fugitive'
-Plug 'mhinz/vim-signify'
-
-" Color Schemes
-Plug 'ryanoasis/vim-devicons'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-Plug 'morhetz/gruvbox'
-
-call plug#end()
-
-
-" Always display the status line
+" Give more space for displaying messages.
+set cmdheight=2
 set laststatus=2
 
-" Theme and Styling
-set t_Co=256
-"set background=dark    " Setting dark mode
-set background=light   " Setting light mode
+" Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
+" delays and poor user experience.
+set updatetime=50
 
-if (has("termguicolors"))
+" Don't pass messages to |ins-completion-menu|.
+set shortmess+=c
+
+set colorcolumn=80
+highlight ColorColumn ctermbg=0 guibg=lightgrey
+
+let loaded_matchparen = 1
+let mapleader = " "
+
+" **************************************
+" *                                    *
+" ******* SOURCE EXTERNAL FILES ********
+" *                                    *
+" **************************************
+source ~/.vim/fragments/statusline.vim
+source ~/.vim/fragments/netrw.vim
+
+" **************************************
+" *                                    *
+" ******* SEARCH WITH JUST VIM  ********
+" *                                    *
+" **************************************
+" WE CAN:
+" - Hit tab to :find by partial match
+" - Use * to make it fuzzy
+" NOTE:
+" - :b lets you autocomplete any open buffer
+" Search down into subfolders
+" Provides tab-completion for all file-related tasks
+set path+=**
+" Ignoring node_modules
+set wildignore+=**/node_modules/**
+set wildignore+=**/vendor/**
+set wildignore+=**/.git/**
+set wildignore+=**/test/**
+" If you have multiple files with the same name, then you are in trouble.
+" Find will not list them out (like cscope/ctags) before it opens the file.
+" You may end up making edits in the wrong file. However, enabling wildmenu 
+" solves this by displaying the possible matches and allows you to choose
+" which file you want to edit. 
+set wildmenu
+
+" **************************************
+" *                                    *
+" ********** SEARCH BY TAGS ************
+" *                                    *
+" **************************************
+" Create a `tags` file (may need to install ctags first)
+" NOW WE CAN:
+" - Use CTR + ] go to jump to definition
+" - Use CTR + t to jumb back up the tags stack
+" - Use g + CTR + ] for list ambiuos tags
+command! MakeTags !ctags -R --exclude=.git --exclude=node_modules --exclude=test --exclude=vendor .
+
+" **************************************
+" *                                    *
+" *********** Color Schemes ************
+" *                                    *
+" **************************************
+if has('termguicolors')
   set termguicolors
 endif
 
+set background=dark
 let base16colorspace=256  " Access colors present in 256 colorspace
 let g:gruvbox_contrast_light='hard'
 let g:gruvbox_number_column='fg4'
+
 colorscheme gruvbox
 
-" ******* Moving Between Splits *****
-nnoremap <C-J> <C-W><C-J>
-nnoremap <C-K> <C-W><C-K>
-nnoremap <C-L> <C-W><C-L>
-nnoremap <C-H> <C-W><C-H>
-" ******* Moving Between Splits *****
-
-" List all buffers
-:nnoremap <F5> :buffers<CR>:buffer<Space>
-
-" JSON
-autocmd FileType json syntax match Comment +\/\/.\+$+
-
-
 " **************************************
 " *                                    *
-" *       PLUGINS CONFIGURATION        *
+" ************** MAPS ******************
 " *                                    *
 " **************************************
+nnoremap <leader>gda :colorscheme gruvbox<bar>:set background=dark<CR>
+nnoremap <leader>gl :colorscheme gruvbox<bar>:set background=light<CR>
 
-" Coc
-" !!!!!!!!!!!!!!!!!!!! COC needs install the servers !!!!!!!!!!!!!!!
-" SQL https://github.com/joe-re/sql-language-server
-" PHP https://github.com/marlonfan/coc-phpls
-" PYTHON https://github.com/neoclide/coc-python
-" JAVASCRIPT TYPESCRIPT https://github.com/neoclide/coc-tsserver
-" ESLINT https://github.com/neoclide/coc-eslint
-" VUE https://github.com/neoclide/coc-vetur
-" ANGULAR https://github.com/iamcco/coc-angular
-" CocInstall coc-tsserver coc-json coc-html coc-css coc-python coc-phpls coc-angular coc-eslint coc-vetur
+nnoremap <C-H> :wincmd h<CR>
+nnoremap <C-J> :wincmd j<CR>
+nnoremap <C-K> :wincmd k<CR>
+nnoremap <C-L> :wincmd l<CR>
 
-set statusline^=%{coc#status()}
-" !!!!!!!!!!!!!!!!!!!! COC needs install the servers !!!!!!!!!!!!!!!
+" Save with F2 in insert mode
+inoremap <silent> <F2> <C-\><C-o>:w<CR><Esc>
 
-" Vim-Airline Configuration
-let g:airline#extensions#tabline#enabled = 1
-let g:airline_powerline_fonts = 1
-let g:airline_theme='hybrid'
-let g:hybrid_custom_term_colors = 1
-let g:hybrid_reduced_contrast = 1
+" surf faster between lines by five lines
+nnoremap <Leader>j 5j
+nnoremap <Leader>k 5k
 
-" ****************fzf********************************
-let g:fzf_colors =
-\ { 'fg':      ['fg', 'Normal'],
-  \ 'bg':      ['bg', 'Normal'],
-  \ 'hl':      ['fg', 'Comment'],
-  \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
-  \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
-  \ 'hl+':     ['fg', 'Statement'],
-  \ 'info':    ['fg', 'PreProc'],
-  \ 'prompt':  ['fg', 'Conditional'],
-  \ 'pointer': ['fg', 'Exception'],
-  \ 'marker':  ['fg', 'Keyword'],
-  \ 'spinner': ['fg', 'Label'],
-  \ 'header':  ['fg', 'Comment'] }
+nnoremap <Leader>+ :vertical resize +5<CR>
+nnoremap <Leader>- :vertical resize -5<CR>
 
-nnoremap <C-p> :Files<CR>
-nnoremap <Leader>b :Buffers<CR>
-nnoremap <Leader>h :History<CR>
-" ****************fzf********************************
+"Go to beginning of the line in insert mode
+inoremap <C-a> <C-o>^ 
+"Go to end of the line in insert mode
+inoremap <C-f> <C-o>$
 
-" BBY delete buffers
-:nnoremap <Leader>q :Bdelete<CR>
+" list all buffers and press number to go to
+:noremap <C-b> :buffers<CR>:buffer<Space>
 
-" Neomake
-" Full config: when writing or reading a buffer, and on changes in insert and
-" normal mode (after 500ms; no delay when writing).
-call neomake#configure#automake('nrwi', 500)
+" find a file in tags
+:noremap <C-p> :find<Space>
 
-" vim-signify
-" default updatetime 4000ms is not good for async update
-set updatetime=100
-
-"**************NerdTree*****************
-map <C-n> :NERDTreeToggle<CR>
-" Close vim when NERDTree is the only one left
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-" NERDTree arrows
-let g:NERDTreeDirArrowExpandable = '▸'
-let g:NERDTreeDirArrowCollapsible = '▾'
-"**************NerdTree*****************
-
+" DelimitMate
+let g:delimitMate_expand_cr = 2
 " **************************************
 " *                                    *
 " *            FUNCTIONS               *
 " *                                    *
 " **************************************
+" JSON
+autocmd FileType json syntax match Comment +\/\/.\+$+
 
-" jump to the last position when reopening a file
+" This way, whenever you type % you jump to the matching object,
+" and you visually select all the text in between.
+noremap % v%
+
 if has("autocmd")
   au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
     \| exe "normal! g'\"" | endif
 endif
+
+fun! TrimWhitespace()
+    let l:save = winsaveview()
+    keeppatterns %s/\s\+$//e
+    call winrestview(l:save)
+endfun
+
