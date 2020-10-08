@@ -116,6 +116,10 @@ nnoremap <leader>u :UndotreeShow<CR>
 nnoremap <Leader>+ :vertical resize +5<CR>
 nnoremap <Leader>- :vertical resize -5<CR>
 
+" emulate scape
+inoremap jh <Esc>
+inoremap jk <Esc>
+
 " This way, whenever you type % you jump to the matching object,
 " and you visually select all the text in between.
 noremap % v%
