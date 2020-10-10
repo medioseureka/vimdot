@@ -71,10 +71,17 @@ set background=dark
 let loaded_matchparen = 1
 let mapleader = " "
 
-let g:netrw_browse_split = 2
+" NETRW CONFIGURATIONS
 let g:netrw_banner = 0
+let g:netrw_liststyle = 3
+let g:netrw_browse_split = 4
+let g:netrw_altv = 1
 let g:netrw_winsize = 15
-" let g:netrw_localrmdir='rm -r'
+
+augroup ProjectDrawer
+  autocmd!
+  autocmd VimEnter * :Vexplore
+augroup END
 
 let g:fzf_layout = { 'window': { 'width': 0.8, 'height': 0.8 } }
 let $FZF_DEFAULT_OPTS='--reverse'
@@ -102,6 +109,10 @@ nnoremap <leader>pg :GFiles<CR>
 nnoremap <leader>pb :Buffers<CR>
 nnoremap <leader>ag :Ag<CR>
 
+" emulate scape
+inoremap jh <Esc>
+inoremap jk <Esc>
+
 " Lint Vue apps
 command! LintVue !eslint --fix . --ext .js,.vue .
 
@@ -116,9 +127,8 @@ nnoremap <leader>u :UndotreeShow<CR>
 nnoremap <Leader>+ :vertical resize +5<CR>
 nnoremap <Leader>- :vertical resize -5<CR>
 
-" emulate scape
-inoremap jh <Esc>
-inoremap jk <Esc>
+" open tree
+:noremap <C-n> :Explore<CR>
 
 " This way, whenever you type % you jump to the matching object,
 " and you visually select all the text in between.
