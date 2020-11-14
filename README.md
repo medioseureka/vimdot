@@ -5,10 +5,9 @@
 ## how to install?
   - clone the repo
   - cd vimdot
-  - cp ~/.vimrc ~/.vimrc_bk
-  - cp vimrc ~/.vimrc
-  - mv ~/.vim ~/.vim_bk
-  - cp vim ~/.vim
+  - cp vimrc ~/.config/nvim/init.vim
+  - mkdir ~/.config/nvim/fragments
+  - mv statusline.vim ~/.config/nvim/fragments
   - cd .. && rm -rf vimdot
   - Ready to use
 
