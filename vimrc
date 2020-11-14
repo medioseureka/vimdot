@@ -1,13 +1,14 @@
 set nocompatible
 syntax on
 
+filetype plugin on
 set guicursor=
 set relativenumber
-set nohlsearch
+" set nohlsearch
 set hidden
 set noerrorbells
-set tabstop=4 softtabstop=4
-set shiftwidth=4
+set tabstop=2 softtabstop=2
+set shiftwidth=2
 set expandtab
 set smartindent
 set nu
@@ -35,15 +36,13 @@ set cmdheight=2
 " delays and poor user experience.
 set updatetime=50
 
-command! MakeTags !ctags -R --exclude=.git --exclude=node_modules --exclude=test --exclude=vendor .
-
 " Don't pass messages to |ins-completion-menu|.
 set shortmess+=c
 
 set colorcolumn=80
 highlight ColorColumn ctermbg=0 guibg=lightgrey
 
-call plug#begin('~/.vim/plugged')
+call plug#begin(stdpath('data') . '/plugged')
 
 Plug 'tpope/vim-fugitive'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
@@ -53,9 +52,8 @@ Plug 'morhetz/gruvbox'
 Plug 'mbbill/undotree'
 
 Plug 'mattn/emmet-vim'
-Plug 'sheerun/vim-polyglot'
-Plug 'StanAngeloff/php.vim'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'honza/vim-snippets'
 call plug#end()
 
 let g:gruvbox_contrast_dark = 'hard'
@@ -74,14 +72,14 @@ let mapleader = " "
 " NETRW CONFIGURATIONS
 let g:netrw_banner = 0
 let g:netrw_liststyle = 3
-let g:netrw_browse_split = 4
+"let g:netrw_browse_split = 0
 let g:netrw_altv = 1
 let g:netrw_winsize = 15
 
-augroup ProjectDrawer
-  autocmd!
-  autocmd VimEnter * :Vexplore
-augroup END
+" augroup ProjectDrawer
+"  autocmd!
+"  autocmd VimEnter * :Vexplore
+"augroup END
 
 let g:fzf_layout = { 'window': { 'width': 0.8, 'height': 0.8 } }
 let $FZF_DEFAULT_OPTS='--reverse'
@@ -113,11 +111,16 @@ nnoremap <leader>ag :Ag<CR>
 inoremap jh <Esc>
 inoremap jk <Esc>
 
-" Lint Vue apps
-command! LintVue !eslint --fix . --ext .js,.vue .
+" commands
+command! VueLint !eslint --fix . --ext .js,.vue .
+command! MakeTags !ctags -R --exclude=.git --exclude=node_modules --exclude=test --exclude=vendor .
+command! Rd syntax sync fromstart
 
 " list all buffers and press number to go to
 :noremap <C-b> :buffers<CR>:buffer<Space>
+
+" Emmet triger
+let g:user_emmet_leader_key=','
 
 nnoremap <leader>h :wincmd h<CR>
 nnoremap <leader>j :wincmd j<CR>
@@ -133,8 +136,6 @@ nnoremap <Leader>- :vertical resize -5<CR>
 " This way, whenever you type % you jump to the matching object,
 " and you visually select all the text in between.
 noremap % v%
-
-inoremap <silent> <C-s> <C-\><C-o>:w<CR><Esc>
 
 fun! TrimWhitespace()
     let l:save = winsaveview()
@@ -157,12 +158,12 @@ endif
 " *** SOURCE EXTERNAL FILES ****
 " *                                    *
 " **************
-source ~/.vim/partials/statusline.vim
+source ~/.config/nvim/fragments/statusline.vim
 
 " **************
 " *                                    *
 " **** COC SERVER ******
-" CocInstall coc-phpls coc-pairs
+" CocInstall coc-phpls coc-pairs coc-tsserver coc-vetur coc-snippets
 " *                                    *
 " **************
 " Always show the signcolumn, otherwise it would shift the text each time
@@ -212,3 +213,17 @@ nmap <silent> gr <Plug>(coc-references)
 
 " Symbol renaming.
 nmap <leader>rn <Plug>(coc-rename)
+
+" use coc-snippets and tab completion tab expand snippet and navigate snippet
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? coc#_select_confirm() :
+      \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+let g:coc_snippet_next = '<tab>'
