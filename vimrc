@@ -54,6 +54,7 @@ Plug 'mbbill/undotree'
 Plug 'mattn/emmet-vim'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'honza/vim-snippets'
+Plug 'godlygeek/tabular'
 call plug#end()
 
 let g:gruvbox_contrast_dark = 'hard'
