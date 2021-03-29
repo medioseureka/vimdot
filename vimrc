@@ -2,22 +2,20 @@ set nocompatible
 syntax on
 
 filetype plugin on
-set guicursor=
+set guicursor=n-v-c-sm:block,i-ci-ve:ver25-iCursor-blinkwait300-blinkon200-blinkoff150,r-cr-o:hor20
 set relativenumber
-" set nohlsearch
+set nu
 set hidden
 set noerrorbells
-set tabstop=2 softtabstop=2
-set shiftwidth=2
-set expandtab
-set smartindent
-set nu
-set nowrap
 set smartcase
+set autoindent
+set expandtab
 set noswapfile
+set tabstop=4 softtabstop=4
+set shiftwidth=4
 set nobackup
 set nowritebackup
-set undodir=~/.vim/undodir
+set undodir=~/.config/nvim/undodir
 set undofile
 set incsearch
 set wildmenu
@@ -26,8 +24,14 @@ set scrolloff=8
 set noshowmode
 set completeopt=menuone,noinsert,noselect
 
-" OSX backspace
-set backspace=indent,eol,start
+let loaded_matchparen = 1
+let mapleader = " "
+
+" NETRW CONFIGURATIONS
+let g:netrw_banner = 0
+let g:netrw_liststyle = 3
+let g:netrw_altv = 1
+let g:netrw_winsize = 15
 
 " Give more space for displaying messages.
 set cmdheight=2
@@ -39,48 +43,76 @@ set updatetime=50
 " Don't pass messages to |ins-completion-menu|.
 set shortmess+=c
 
-set colorcolumn=80
-highlight ColorColumn ctermbg=0 guibg=lightgrey
+set cursorline
 
-call plug#begin(stdpath('data') . '/plugged')
+call plug#begin('~/.vim/plugged')
 
-Plug 'tpope/vim-fugitive'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
-Plug 'morhetz/gruvbox'
-Plug 'mbbill/undotree'
+Plug 'sainnhe/sonokai'
+Plug 'itchyny/lightline.vim'
 
 Plug 'mattn/emmet-vim'
+
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'honza/vim-snippets'
+
 Plug 'godlygeek/tabular'
+
+" polyglot file types
+Plug 'jwalton512/vim-blade'
 call plug#end()
 
-let g:gruvbox_contrast_dark = 'hard'
-if exists('+termguicolors')
-    let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
-    let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+if has('termguicolors')
+  set termguicolors
 endif
-let g:gruvbox_invert_selection='0'
+let g:sonokai_style = 'andromeda'
+let g:sonokai_enable_italic = 1
+let g:sonokai_disable_italic_comment = 1
+colorscheme sonokai
+let g:sonokai_style = 'atlantis'
+let g:sonokai_menu_selection_background = 'green'
+let g:sonokai_cursor = 'green'
+let g:sonokai_diagnostic_text_highlight = 1
+let g:sonokai_diagnostic_line_highlight = 1
 
-colorscheme gruvbox
-set background=dark
+" list all buffers and press number to go to
+:noremap <C-b> :buffers<CR>:buffer<Space>
 
-let loaded_matchparen = 1
-let mapleader = " "
+" open tree
+:noremap <C-n> :Explore<CR>
 
-" NETRW CONFIGURATIONS
-let g:netrw_banner = 0
-let g:netrw_liststyle = 3
-"let g:netrw_browse_split = 0
-let g:netrw_altv = 1
-let g:netrw_winsize = 15
+nnoremap <leader>h :wincmd h<CR>
+nnoremap <leader>j :wincmd j<CR>
+nnoremap <leader>k :wincmd k<CR>
+nnoremap <leader>l :wincmd l<CR>
 
-" augroup ProjectDrawer
-"  autocmd!
-"  autocmd VimEnter * :Vexplore
-"augroup END
+" commands
+" Lint Vue project
+command! VueLint !eslint --fix . --ext .js,.vue .
+" Make tags from project
+command! MakeTags !ctags -R --exclude=.git --exclude=node_modules --exclude=test --exclude=vendor .
+" Redraw a file which has no colorized
+command! Rd syntax sync fromstart
+" tells vim to remove CRLF and LF-only line endings
+nnoremap <leader>tu :e ++ff=dos <CR>:set ff=unix<CR>
+
+" This way, whenever you type % you jump to the matching object,
+" and you visually select all the text in between.
+noremap % v%
+
+fun! TrimWhitespace()
+    let l:save = winsaveview()
+    keeppatterns %s/\s\+$//e
+    call winrestview(l:save)
+endfun
+
+if has("autocmd")
+  au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
+    \| exe "normal! g'\"" | endif
+endif
+
 
 let g:fzf_layout = { 'window': { 'width': 0.8, 'height': 0.8 } }
 let $FZF_DEFAULT_OPTS='--reverse'
@@ -108,87 +140,10 @@ nnoremap <leader>pg :GFiles<CR>
 nnoremap <leader>pb :Buffers<CR>
 nnoremap <leader>ag :Ag<CR>
 
-" emulate scape
-inoremap jh <Esc>
-inoremap jk <Esc>
-
-" commands
-command! VueLint !eslint --fix . --ext .js,.vue .
-command! MakeTags !ctags -R --exclude=.git --exclude=node_modules --exclude=test --exclude=vendor .
-command! Rd syntax sync fromstart
-
-" list all buffers and press number to go to
-:noremap <C-b> :buffers<CR>:buffer<Space>
-
-" Emmet triger
-let g:user_emmet_leader_key=','
-
-nnoremap <leader>h :wincmd h<CR>
-nnoremap <leader>j :wincmd j<CR>
-nnoremap <leader>k :wincmd k<CR>
-nnoremap <leader>l :wincmd l<CR>
-nnoremap <leader>u :UndotreeShow<CR>
-nnoremap <Leader>+ :vertical resize +5<CR>
-nnoremap <Leader>- :vertical resize -5<CR>
-
-" open tree
-:noremap <C-n> :Explore<CR>
-
-" This way, whenever you type % you jump to the matching object,
-" and you visually select all the text in between.
-noremap % v%
-
-fun! TrimWhitespace()
-    let l:save = winsaveview()
-    keeppatterns %s/\s\+$//e
-    call winrestview(l:save)
-endfun
-
-" This way, whenever you type % you jump to the matching object,
-" and you visually select all the text in between.
-noremap % v%
-
-if has("autocmd")
-  au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
-    \| exe "normal! g'\"" | endif
-endif
-
-
-" **************
-" *                                    *
-" *** SOURCE EXTERNAL FILES ****
-" *                                    *
-" **************
-source ~/.config/nvim/fragments/statusline.vim
-
 " **************
 " *                                    *
 " **** COC SERVER ******
-" CocInstall coc-phpls coc-pairs coc-tsserver coc-vetur coc-snippets
-" *                                    *
-" **************
-" Always show the signcolumn, otherwise it would shift the text each time
-" diagnostics appear/become resolved.
-if has("patch-8.1.1564")
-  " Recently vim can merge signcolumn and number column into one
-  set signcolumn=number
-else
-  set signcolumn=yes
-endif
-
-" Use tab for trigger completion with characters ahead and navigate.
-" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
-" other plugin before putting this into your config.
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
+" CocInstall coc-phpls coc-pairs coc-tsserver coc-vetur coc-snippets coc-html
 
 " Use <c-space> to trigger completion.
 if has('nvim')
